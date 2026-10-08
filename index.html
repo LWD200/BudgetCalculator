@@ -4,57 +4,54 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
-<title>Budget Tracker</title>
+<title>Budget Planner</title>
 
 <style>
-
-:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2123;--mute:#6b6c75;--line:#e4e2db;--acc:#1a0bbf;--bad:#5d9af0;--warn:#802020;
+:root{--bg:#e6eefb;--card:#f8fbff;--ink:#14233b;--mute:#5a6b88;--line:#cddcf2;--acc:#2563c9;--bad:#c2453a;--n:#7a5cc7;--w:#c98a1b;--s:#2563c9;--u:#b4c3dc;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#22212d;--card:#1d1d23;--ink:#ececef;--mute:#737995;--line:#2c2935;--acc:#4c60c5;--bad:#ecbdb9;--warn:#e2ad4a}}
-:root[data-theme="dark"]{--bg:#1b1b44;--card:#2f2147;--ink:#ecefed;--mute:#97a29d;--line:#2a244f;--acc:#9bcfea;--bad:#e8776d;--warn:#e2ad4a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1627;--card:#16233a;--ink:#e8eefb;--mute:#8fa2c4;--line:#27385b;--acc:#5b9cf5;--bad:#e8776d;--n:#a48be6;--w:#e2ad4a;--s:#5b9cf5;--u:#3a4c70}}
+:root[data-theme="dark"]{--bg:#0d1627;--card:#16233a;--ink:#e8eefb;--mute:#8fa2c4;--line:#27385b;--acc:#5b9cf5;--bad:#e8776d;--n:#a48be6;--w:#e2ad4a;--s:#5b9cf5;--u:#3a4c70}
 *{box-sizing:border-box}
-
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-
-main{max-width:860px;margin:0 auto;padding:20px 16px 40px}
-
+main{max-width:900px;margin:0 auto;padding:20px 16px 48px}
 h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.05rem;margin:0 0 12px}
-
-.sub{color:var(--mute);margin:0 0 20px}
-.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.sub{color:var(--mute);margin:0 0 18px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
-.grid .card{margin:0}
-.lbl{color:var(--mute);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
-.big{font-size:1.6rem;font-weight:700;margin-top:2px}
-.pos{color:var(--acc)}.neg{color:var(--bad)}
-
-form,.row{display:flex;flex-wrap:wrap;gap:8px}
-
-input,select,button{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
-
-input{flex:1 1 120px;min-width:0}
-
+.lbl{color:var(--mute);font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+input,button{font:inherit;padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);min-width:0}
 button{background:var(--acc);color:#fff;border:0;font-weight:600;cursor:pointer}
-
-button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line);padding:6px 10px;font-weight:500}
-
-.cat{margin-bottom:14px}
-.cat .top{display:flex;justify-content:space-between;gap:8px;font-size:.92rem;align-items:center}
-.bar{height:9px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
-.bar i{display:block;height:100%;background:var(--acc);border-radius:6px}
-.cat input.lim{width:90px;flex:none;padding:4px 8px;text-align:right}
-.scroll{overflow-x:auto}
-
-table{width:100%;border-collapse:collapse;font-size:.92rem}
-
-td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
-
-td.r,th.r{text-align:right}
-.empty{color:var(--mute);padding:10px 0}
-
+button.g{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.hero{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.left{font-size:2rem;font-weight:800}
+.ok{color:var(--acc)}.bad{color:var(--bad)}
+.stack{display:flex;height:16px;border-radius:9px;overflow:hidden;background:var(--line);margin:12px 0 8px}
+.stack i{display:block;height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;color:var(--mute)}
+.leg b{color:var(--ink)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.inc{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.inc input{width:140px;font-size:1.1rem;font-weight:700}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.item{display:grid;grid-template-columns:minmax(90px,1.2fr) 2fr 90px 52px 28px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line)}
+.item .nm{font-size:.94rem;overflow:hidden;text-overflow:ellipsis}
+.item input[type=range]{width:100%;padding:0;accent-color:var(--acc);border:0;background:none}
+.item input[type=number]{text-align:right;padding:6px 8px}
+.pct{color:var(--mute);font-size:.82rem;text-align:right}
+.x{background:none;color:var(--mute);padding:2px 6px;font-size:1.1rem}
+.gh{display:flex;justify-content:space-between;align-items:baseline;margin:16px 0 2px;font-weight:700}
+.gh span{font-weight:400;color:var(--mute);font-size:.85rem}
+.add{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}.add input{flex:1 1 120px}
+.add select{font:inherit;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.row2{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));margin-bottom:12px}
+.row2 label{display:block;font-size:.78rem;color:var(--mute);margin-bottom:4px}.row2 input{width:100%}
+.kpi{font-size:1.15rem;font-weight:700}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden;margin:8px 0}
+.bar i{display:block;height:100%;background:var(--acc)}
+.scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.9rem}
+td,th{padding:7px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}td:first-child,th:first-child{text-align:left}
+@media(max-width:560px){.item{grid-template-columns:1fr 90px 28px}.item .sl,.item .pct{display:none}}
 </style>
 
 </head>
@@ -63,84 +60,119 @@ td.r,th.r{text-align:right}
 
     <main>
 
-        <h1>Budget Tracker</h1>
-        <p class="sub">This was made by LaQuadrian Dean (LWD200).</p>
-        <p class="sub">Log income and spending, set limits per category, and see where you stand.</p>
+        <h1>Budget Planner</h1>
 
-<div class="grid">
-  <div class="card"><div class="lbl">Income</div><div class="big pos" id="inc">$0</div></div>
-  <div class="card"><div class="lbl">Spent</div><div class="big neg" id="exp">$0</div></div>
-  <div class="card"><div class="lbl">Remaining</div><div class="big" id="bal">$0</div></div>
+        <p class="sub">Made by LaQuadrian Dean (LWD200).</p>
+
+<div class="card top">
+  <div class="hero">
+    <div><div class="lbl">Left to assign</div><div class="left" id="left">$0</div><div id="msg" class="sub" style="margin:0"></div></div>
+    <div class="inc"><div><div class="lbl">Monthly take-home</div><input id="income" type="number" min="0" step="50" aria-label="Monthly income"></div></div>
+  </div>
+  <div class="stack" id="stack"></div>
+  <div class="leg" id="leg"></div>
 </div>
 
 <div class="card">
-  <h2>Add transaction</h2>
-  <form id="f">
-    <select id="type"><option value="expense">Expense</option><option value="income">Income</option></select>
-    <input id="desc" placeholder="Description" required>
-    <input id="amt" type="number" step="0.01" min="0.01" placeholder="Amount" required>
-    <select id="cat"></select>
-    <button type="submit">Add</button>
-  </form>
+  <h2>Plan your month</h2>
+  <div class="presets">
+    <button class="g" onclick="preset(50,30,20)">50/30/20</button>
+    <button class="g" onclick="preset(60,15,25)">Lean 60/15/25</button>
+    <button class="g" onclick="preset(50,20,30)">Saver 50/20/30</button>
+    <button onclick="zero()">Put the rest in savings</button>
+  </div>
+  <div id="items"></div>
+  <div class="add">
+    <input id="nn" placeholder="New category">
+    <select id="ng"><option value="Needs">Needs</option><option value="Wants">Wants</option><option value="Savings">Savings</option></select>
+    <button onclick="addItem()">Add</button>
+  </div>
 </div>
 
 <div class="card">
-  <h2>Category budgets</h2>
-  <div id="cats"></div>
+  <h2>Savings goal</h2>
+  <div class="row2">
+    <div><label>Goal name</label><input id="gn"></div>
+    <div><label>Target $</label><input id="gt" type="number" min="0"></div>
+    <div><label>Saved so far $</label><input id="gs" type="number" min="0"></div>
+  </div>
+  <div class="bar"><i id="gbar"></i></div>
+  <div id="gout"></div>
 </div>
 
 <div class="card">
-  <h2>Transactions</h2>
-  <div class="scroll"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th class="r">Amount</th><th></th></tr></thead><tbody id="tx"></tbody></table></div>
-  <div class="empty" id="empty">No transactions yet.</div>
-  <p style="margin:12px 0 0"><button class="ghost" id="reset">Clear all data</button></p>
+  <h2>What if I cut spending?</h2>
+  <div class="row2">
+    <div><label>Trim Wants by <b id="cv">10</b>%</label><input id="cut" type="range" min="0" max="50" value="10" style="padding:0;border:0"></div>
+  </div>
+  <div id="wout"></div>
+</div>
+
+<div class="card">
+  <h2>Year view</h2>
+  <div class="scroll"><table><thead><tr><th>Category</th><th>Monthly</th><th>Yearly</th></tr></thead><tbody id="yr"></tbody></table></div>
+  <p style="margin:12px 0 0"><button class="g" onclick="resetAll()">Reset</button></p>
 </div>
 </main>
+
 <script>
-
-var CATS=["Housing","Food","Transport","Utilities","Fun","Health","Savings","Other"];
-
-var KEY="budget-v1";
-
-var state={tx:[],limits:{Housing:1200,Food:500,Transport:200,Utilities:150,Fun:150,Health:100,Savings:300,Other:100}};
-
-try{var s=localStorage.getItem(KEY);if(s){var p=JSON.parse(s);if(p&&p.tx&&p.limits)state=p}}catch(e){}
-
-
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-
-function $(i){return document.getElementById(i)}
-
-var fmt=function(n){return (n<0?"-":"")+"$"+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})};
-
-function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
-
-
-$("cat").innerHTML=CATS.map(function(c){return "<option>"+c+"</option>"}).join("");
-$("type").onchange=function(){$("cat").style.display=this.value==="income"?"none":""};
-$("f").onsubmit=function(e){
-  e.preventDefault();
-  var inc=$("type").value==="income";
-  state.tx.unshift({id:Date.now(),date:new Date().toISOString().slice(0,10),desc:$("desc").value.trim(),amt:parseFloat($("amt").value),type:$("type").value,cat:inc?"Income":$("cat").value});
-  $("desc").value="";$("amt").value="";save();render();
-};
-$("reset").onclick=function(){if(confirm("Delete all transactions?")){state.tx=[];save();render()}};
-function del(id){state.tx=state.tx.filter(function(t){return t.id!==id});save();render()}
-function setLimit(c,v){state.limits[c]=Math.max(0,parseFloat(v)||0);save();render()}
-function render(){
-  var inc=0,exp=0,by={};
-  state.tx.forEach(function(t){if(t.type==="income")inc+=t.amt;else{exp+=t.amt;by[t.cat]=(by[t.cat]||0)+t.amt}});
-  $("inc").textContent=fmt(inc);$("exp").textContent=fmt(exp);
-  var b=inc-exp;$("bal").textContent=fmt(b);$("bal").className="big "+(b>=0?"pos":"neg");
-  $("cats").innerHTML=CATS.map(function(c){
-    var sp=by[c]||0,lim=state.limits[c]||0,pct=lim?Math.min(100,sp/lim*100):(sp?100:0);
-    var col=sp>lim?"var(--bad)":pct>80?"var(--warn)":"var(--acc)";
-    return '<div class="cat"><div class="top"><span><b>'+c+'</b> &middot; '+fmt(sp)+' of</span><input class="lim" type="number" min="0" value="'+lim+'" aria-label="'+c+' limit" onchange="setLimit(\''+c+'\',this.value)"></div><div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
-  }).join("");
-  $("tx").innerHTML=state.tx.map(function(t){
-    return "<tr><td>"+t.date+"</td><td>"+esc(t.desc)+"</td><td>"+t.cat+'</td><td class="r '+(t.type==="income"?"pos":"")+'">'+(t.type==="income"?"+":"-")+fmt(t.amt)+'</td><td><button class="ghost" onclick="del('+t.id+')" aria-label="Delete">&times;</button></td></tr>';
-  }).join("");
-  $("empty").style.display=state.tx.length?"none":"";
+var KEY="planner-v1",G=["Needs","Wants","Savings"],COL={Needs:"var(--n)",Wants:"var(--w)",Savings:"var(--s)"};
+var def=function(){return{income:4000,goal:{name:"Emergency fund",target:10000,saved:1500},items:[
+{id:1,name:"Rent / mortgage",g:"Needs",a:1300},{id:2,name:"Groceries",g:"Needs",a:450},{id:3,name:"Transport",g:"Needs",a:250},{id:4,name:"Utilities & phone",g:"Needs",a:200},{id:5,name:"Insurance & health",g:"Needs",a:150},
+{id:6,name:"Dining out",g:"Wants",a:200},{id:7,name:"Fun & hobbies",g:"Wants",a:150},{id:8,name:"Subscriptions",g:"Wants",a:50},
+{id:9,name:"Emergency fund",g:"Savings",a:400},{id:10,name:"Retirement",g:"Savings",a:200}]}};
+var S=def();
+try{var r=localStorage.getItem(KEY);if(r){var p=JSON.parse(r);if(p&&p.items&&p.goal)S=p}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+var f0=function(n){return(n<0?"-":"")+"$"+Math.abs(Math.round(n)).toLocaleString()};
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function tot(g){return S.items.filter(function(i){return i.g===g}).reduce(function(s,i){return s+i.a},0)}
+function setA(id,v){S.items.forEach(function(i){if(i.id===id)i.a=Math.max(0,Math.round(parseFloat(v)||0))});save();render()}
+function del(id){S.items=S.items.filter(function(i){return i.id!==id});save();render()}
+function addItem(){var n=$("nn").value.trim();if(!n)return;S.items.push({id:Date.now(),name:n,g:$("ng").value,a:0});$("nn").value="";save();render()}
+function preset(n,w,s){var inc=S.income,t={Needs:inc*n/100,Wants:inc*w/100,Savings:inc*s/100};
+  G.forEach(function(g){var its=S.items.filter(function(i){return i.g===g}),cur=tot(g);
+    its.forEach(function(i){i.a=Math.round(cur?t[g]*i.a/cur:t[g]/its.length)})});save();render()}
+function zero(){var left=S.income-S.items.reduce(function(s,i){return s+i.a},0);
+  var sv=S.items.filter(function(i){return i.g==="Savings"})[0];if(!sv){sv={id:Date.now(),name:"Savings",g:"Savings",a:0};S.items.push(sv)}
+  sv.a=Math.max(0,sv.a+left);save();render()}
+function resetAll(){if(confirm("Reset the whole plan?")){S=def();save();render()}}
+$("income").oninput=function(){S.income=Math.max(0,parseFloat(this.value)||0);save();render(true)};
+["gn","gt","gs"].forEach(function(k){$(k).oninput=function(){S.goal[{gn:"name",gt:"target",gs:"saved"}[k]]=k==="gn"?this.value:(parseFloat(this.value)||0);save();render(true)}});
+$("cut").oninput=function(){render(true)};
+function render(keep){
+  var inc=S.income,tn=tot("Needs"),tw=tot("Wants"),ts=tot("Savings"),all=tn+tw+ts,left=inc-all;
+  var L=$("left");L.textContent=f0(left);L.className="left "+(left<0?"bad":left===0?"ok":"");
+  $("msg").textContent=left<0?"Over-allocated by "+f0(-left)+" - trim something.":left===0?"Every dollar has a job.":"Unassigned money tends to disappear.";
+  var base=Math.max(inc,all)||1;
+  $("stack").innerHTML=[["Needs",tn],["Wants",tw],["Savings",ts]].map(function(x){return'<i style="width:'+x[1]/base*100+'%;background:'+COL[x[0]]+'"></i>'}).join("");
+  var pc=function(v){return inc?Math.round(v/inc*100):0};
+  $("leg").innerHTML=[["Needs",tn,50],["Wants",tw,30],["Savings",ts,20]].map(function(x){return'<span><span class="dot" style="background:'+COL[x[0]]+'"></span>'+x[0]+' <b>'+pc(x[1])+'%</b> ('+f0(x[1])+') <span>target '+x[2]+'%</span></span>'}).join("");
+  if(keep!==true||!$("items").innerHTML){
+    $("income").value=S.income;$("gn").value=S.goal.name;$("gt").value=S.goal.target;$("gs").value=S.goal.saved;
+    $("items").innerHTML=G.map(function(g){
+      return'<div class="gh"><span style="color:var(--ink)"><span class="dot" style="background:'+COL[g]+'"></span>'+g+'</span><span id="gt_'+g+'"></span></div>'+
+      S.items.filter(function(i){return i.g===g}).map(function(i){
+        return'<div class="item"><div class="nm">'+esc(i.name)+'</div><div class="sl"><input type="range" min="0" max="'+Math.max(inc,1)+'" step="10" value="'+i.a+'" data-id="'+i.id+'" aria-label="'+esc(i.name)+'"></div><input type="number" min="0" value="'+i.a+'" data-id="'+i.id+'" aria-label="'+esc(i.name)+' amount"><div class="pct" id="p'+i.id+'">'+pc(i.a)+'%</div><button class="x" onclick="del('+i.id+')" aria-label="Remove">&times;</button></div>'}).join("")}).join("");
+    document.querySelectorAll("#items input").forEach(function(el){el.oninput=function(){var id=+el.dataset.id;
+      S.items.forEach(function(i){if(i.id===id)i.a=Math.max(0,Math.round(parseFloat(el.value)||0))});save();
+      document.querySelectorAll('#items input[data-id="'+id+'"]').forEach(function(o){if(o!==el)o.value=el.value});render(true)}});
+  }
+  S.items.forEach(function(i){var e=$("p"+i.id);if(e)e.textContent=pc(i.a)+"%"});
+  G.forEach(function(g){var e=$("gt_"+g);if(e)e.textContent=f0(tot(g))+" / mo"});
+  // goal
+  var gl=S.goal,rem=Math.max(0,gl.target-gl.saved),contrib=ts;
+  $("gbar").style.width=(gl.target?Math.min(100,gl.saved/gl.target*100):0)+"%";
+  if(rem===0)$("gout").innerHTML='<div class="kpi ok">Goal reached.</div>';
+  else if(contrib<=0)$("gout").innerHTML='<div class="sub">Assign money to Savings to see when you will get there.</div>';
+  else{var m=Math.ceil(rem/contrib),d=new Date();d.setMonth(d.getMonth()+m);
+    $("gout").innerHTML='<div class="kpi">'+m+' month'+(m===1?"":"s")+' - '+d.toLocaleDateString(undefined,{month:"long",year:"numeric"})+'</div><div class="sub" style="margin:2px 0 0">At '+f0(contrib)+'/mo you need '+f0(rem)+' more. +$100/mo gets you there '+(m-Math.ceil(rem/(contrib+100)))+' month(s) sooner.</div>'}
+  // what-if
+  var c=+$("cut").value;$("cv").textContent=c;var sv=tw*c/100;
+  $("wout").innerHTML='<div class="kpi ok">+'+f0(sv)+'/mo &middot; +'+f0(sv*12)+'/yr</div><div class="sub" style="margin:2px 0 0">'+(contrib>0&&rem>0?"Sent to your goal, you finish "+(Math.ceil(rem/contrib)-Math.ceil(rem/(contrib+sv)))+" month(s) earlier.":"Freed-up money you could redirect to savings.")+'</div>';
+  // year
+  $("yr").innerHTML=S.items.map(function(i){return"<tr><td>"+esc(i.name)+"</td><td>"+f0(i.a)+"</td><td>"+f0(i.a*12)+"</td></tr>"}).join("")+'<tr><th>Income</th><th>'+f0(inc)+'</th><th>'+f0(inc*12)+'</th></tr><tr><th>Unassigned</th><th>'+f0(left)+'</th><th>'+f0(left*12)+'</th></tr>';
 }
 render();
 

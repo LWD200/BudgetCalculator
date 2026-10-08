@@ -1,16 +1,151 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        Title Head
-    </title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<title>Budget Tracker</title>
+
+<style>
+
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d2320;--mute:#6b7571;--line:#e4e2db;--acc:#1f7a5a;--bad:#c2453a;--warn:#c98a1b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141816;--card:#1d2320;--ink:#ecefed;--mute:#97a29d;--line:#2d3532;--acc:#4cc59a;--bad:#e8776d;--warn:#e2ad4a}}
+:root[data-theme="dark"]{--bg:#141816;--card:#1d2320;--ink:#ecefed;--mute:#97a29d;--line:#2d3532;--acc:#4cc59a;--bad:#e8776d;--warn:#e2ad4a}
+*{box-sizing:border-box}
+
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+
+main{max-width:860px;margin:0 auto;padding:20px 16px 40px}
+
+h1{font-size:1.6rem;margin:0 0 4px}h2{font-size:1.05rem;margin:0 0 12px}
+
+.sub{color:var(--mute);margin:0 0 20px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.grid .card{margin:0}
+.lbl{color:var(--mute);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
+.big{font-size:1.6rem;font-weight:700;margin-top:2px}
+.pos{color:var(--acc)}.neg{color:var(--bad)}
+
+form,.row{display:flex;flex-wrap:wrap;gap:8px}
+
+input,select,button{font:inherit;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+
+input{flex:1 1 120px;min-width:0}
+
+button{background:var(--acc);color:#fff;border:0;font-weight:600;cursor:pointer}
+
+button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line);padding:6px 10px;font-weight:500}
+
+.cat{margin-bottom:14px}
+.cat .top{display:flex;justify-content:space-between;gap:8px;font-size:.92rem;align-items:center}
+.bar{height:9px;background:var(--line);border-radius:6px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:6px}
+.cat input.lim{width:90px;flex:none;padding:4px 8px;text-align:right}
+.scroll{overflow-x:auto}
+
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+
+td.r,th.r{text-align:right}
+.empty{color:var(--mute);padding:10px 0}
+
+</style>
+
 </head>
 
 <body>
-    <h1>Header of Document</h1>
-    <p>Body of Document</p>
+
+    <main>
+
+        <h1>Budget Tracker</h1>
+
+        <p class="sub">Log income and spending, set limits per category, and see where you stand.</p>
+
+<div class="grid">
+  <div class="card"><div class="lbl">Income</div><div class="big pos" id="inc">$0</div></div>
+  <div class="card"><div class="lbl">Spent</div><div class="big neg" id="exp">$0</div></div>
+  <div class="card"><div class="lbl">Remaining</div><div class="big" id="bal">$0</div></div>
+</div>
+
+<div class="card">
+  <h2>Add transaction</h2>
+  <form id="f">
+    <select id="type"><option value="expense">Expense</option><option value="income">Income</option></select>
+    <input id="desc" placeholder="Description" required>
+    <input id="amt" type="number" step="0.01" min="0.01" placeholder="Amount" required>
+    <select id="cat"></select>
+    <button type="submit">Add</button>
+  </form>
+</div>
+
+<div class="card">
+  <h2>Category budgets</h2>
+  <div id="cats"></div>
+</div>
+
+<div class="card">
+  <h2>Transactions</h2>
+  <div class="scroll"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th class="r">Amount</th><th></th></tr></thead><tbody id="tx"></tbody></table></div>
+  <div class="empty" id="empty">No transactions yet.</div>
+  <p style="margin:12px 0 0"><button class="ghost" id="reset">Clear all data</button></p>
+</div>
+</main>
+<script>
+
+var CATS=["Housing","Food","Transport","Utilities","Fun","Health","Savings","Other"];
+
+var KEY="budget-v1";
+
+var state={tx:[],limits:{Housing:1200,Food:500,Transport:200,Utilities:150,Fun:150,Health:100,Savings:300,Other:100}};
+
+try{var s=localStorage.getItem(KEY);if(s){var p=JSON.parse(s);if(p&&p.tx&&p.limits)state=p}}catch(e){}
+
+
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+function $(i){return document.getElementById(i)}
+
+var fmt=function(n){return (n<0?"-":"")+"$"+Math.abs(n).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2})};
+
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+
+
+$("cat").innerHTML=CATS.map(function(c){return "<option>"+c+"</option>"}).join("");
+$("type").onchange=function(){$("cat").style.display=this.value==="income"?"none":""};
+$("f").onsubmit=function(e){
+  e.preventDefault();
+  var inc=$("type").value==="income";
+  state.tx.unshift({id:Date.now(),date:new Date().toISOString().slice(0,10),desc:$("desc").value.trim(),amt:parseFloat($("amt").value),type:$("type").value,cat:inc?"Income":$("cat").value});
+  $("desc").value="";$("amt").value="";save();render();
+};
+$("reset").onclick=function(){if(confirm("Delete all transactions?")){state.tx=[];save();render()}};
+function del(id){state.tx=state.tx.filter(function(t){return t.id!==id});save();render()}
+function setLimit(c,v){state.limits[c]=Math.max(0,parseFloat(v)||0);save();render()}
+function render(){
+  var inc=0,exp=0,by={};
+  state.tx.forEach(function(t){if(t.type==="income")inc+=t.amt;else{exp+=t.amt;by[t.cat]=(by[t.cat]||0)+t.amt}});
+  $("inc").textContent=fmt(inc);$("exp").textContent=fmt(exp);
+  var b=inc-exp;$("bal").textContent=fmt(b);$("bal").className="big "+(b>=0?"pos":"neg");
+  $("cats").innerHTML=CATS.map(function(c){
+    var sp=by[c]||0,lim=state.limits[c]||0,pct=lim?Math.min(100,sp/lim*100):(sp?100:0);
+    var col=sp>lim?"var(--bad)":pct>80?"var(--warn)":"var(--acc)";
+    return '<div class="cat"><div class="top"><span><b>'+c+'</b> &middot; '+fmt(sp)+' of</span><input class="lim" type="number" min="0" value="'+lim+'" aria-label="'+c+' limit" onchange="setLimit(\''+c+'\',this.value)"></div><div class="bar"><i style="width:'+pct+'%;background:'+col+'"></i></div></div>';
+  }).join("");
+  $("tx").innerHTML=state.tx.map(function(t){
+    return "<tr><td>"+t.date+"</td><td>"+esc(t.desc)+"</td><td>"+t.cat+'</td><td class="r '+(t.type==="income"?"pos":"")+'">'+(t.type==="income"?"+":"-")+fmt(t.amt)+'</td><td><button class="ghost" onclick="del('+t.id+')" aria-label="Delete">&times;</button></td></tr>';
+  }).join("");
+  $("empty").style.display=state.tx.length?"none":"";
+}
+render();
+
+</script>
+
 </body>
 
 </html>
